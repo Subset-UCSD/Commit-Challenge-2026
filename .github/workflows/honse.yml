@@ -1,0 +1,37 @@
+name: send them a horse
+on:
+  workflow_dispatch:
+    inputs:
+      textbox:
+        description: this is a textbox
+        required: true
+        default: 'honse'
+        type: string
+
+      multipleChoice:
+        description: 🌊🐴
+        required: true
+        default: 'honse'
+        type: choice
+        options: 
+        - honse
+        - sea
+        - man
+
+jobs:
+  horsdfbdhfgkhdsfg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: send the horse
+        run: |
+          curl "$GOOGLE_FORM_URL" \
+            -d "entry.1827959375=$TEXTBOX" \
+            -d "entry.500539449=$CHOICE" \
+            -d submit=Submit \
+        env:
+          GOOGLE_FORM_URL: ${{ secrets.GOOGLE_FORM_URL }}
+          TEXTBOX: ${{ inputs.textbox }}
+          CHOICE: ${{ inputs.multipleChoice }}
+          
+    permissions:
+      issues: write

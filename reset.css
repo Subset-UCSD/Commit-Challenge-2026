@@ -1,0 +1,45 @@
+:root {
+  color-scheme: light;
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-overflow-scrolling: touch;
+  @media (prefers-reduced-motion) {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: none;
+}
+button:enabled,
+select:enabled {
+  cursor: pointer;
+}
+a {
+  text-decoration: unset;
+  color: unset;
+}

@@ -1,0 +1,30 @@
+name: automerge Dependabot, reject others
+
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  purr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: automerge Dependabot
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          gh pr ready "${{ github.event.pull_request.html_url }}" || true
+          gh pr review --approve --body "lgtm" "${{ github.event.pull_request.html_url }}" || true
+          gh pr merge --auto --delete-branch --subject "yolo" --merge "${{ github.event.pull_request.html_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: you must commit to main
+        if: github.actor != 'dependabot[bot]'
+        run: |
+          gh pr close "${{ github.event.pull_request.html_url }}" --delete-branch --comment "fuck off"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

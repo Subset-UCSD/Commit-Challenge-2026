@@ -25,13 +25,14 @@ jobs:
       - name: send the horse
         run: |
           curl "$GOOGLE_FORM_URL" \
+            -d "entry.1885371766=$ACTOR" \
             -d "entry.1827959375=$TEXTBOX" \
             -d "entry.500539449=$CHOICE" \
             -d submit=Submit \
         env:
           GOOGLE_FORM_URL: ${{ secrets.GOOGLE_FORM_URL }}
+          ACTOR: ${{ github.actor}}
           TEXTBOX: ${{ inputs.textbox }}
           CHOICE: ${{ inputs.multipleChoice }}
-          
     permissions:
       issues: write

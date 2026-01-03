@@ -9,5 +9,5 @@ Previous challenges:
 - [2024](https://github.com/NolanChai/Commit-Challenge-2024)
 
 Our current participants:
-- [<img src="https://github.com/sprestrelski.png" width="16" /> Sam](https://github.com/sprestrelski)
+- [<img src="https://github.com/sprestrelski.png" width="16" /> sam](https://github.com/sprestrelski)
 - [<img src="https://github.com/SheepTester.png" width="16" /> Sean](https://github.com/SheepTester)

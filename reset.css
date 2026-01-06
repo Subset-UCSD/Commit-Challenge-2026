@@ -45,3 +45,16 @@ a {
   text-decoration: unset;
   color: unset;
 }
+
+.link {
+  color: LinkText;
+  text-decoration: underline;
+  text-decoration-color: color-mix(
+    in srgb,
+    currentColor 20%,
+    transparent
+  );
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}

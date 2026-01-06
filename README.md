@@ -10,4 +10,4 @@ Previous challenges:
 
 Our current participants:
 - [<img src="https://github.com/sprestrelski.png" width="16" /> sam](https://github.com/sprestrelski)
-- [<img src="https://github.com/SheepTester.png" width="16" /> Sean](https://github.com/SheepTester)
+- [<img src="https://github.com/SheepTester.png" width="16" /> sean](https://github.com/SheepTester)

@@ -9,37 +9,29 @@
     />
     <meta name="theme-color" content="#8ace00" />
     <link rel="stylesheet" type="text/css" href="./reset.css" />
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
       body {
         padding: 20px;
         display: flex;
         flex-direction: column;
+        gap: 20px;
       }
       header,
       footer {
         display: flex;
-        flex-wrap: 10px;
         gap: 20px;
       }
       nav {
-        display: contents;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
       }
       main {
         display: flex;
         flex-direction: column;
         gap: 10px;
-      }
-
-      a {
-        color: LinkText;
-        text-decoration-color: color-mix(
-          in srgb,
-          currentColor 20%,
-          transparent
-        );
-        &:hover {
-          text-decoration-color: currentColor;
-        }
       }
     </style>
   </head>
@@ -47,9 +39,9 @@
     <header>
       <strong>2026</strong>
       <nav>
-        <a href="/Commit-Challenge-2025/">2025</a>
-        <a href="https://nolanchai.github.io/Commit-Challenge-2024/">2024</a>
-        <a href="https://github.com/Subset-UCSD/Commit-Challenge-2026"
+        <a class="link" href="/Commit-Challenge-2025/">2025</a>
+        <a class="link" href="https://nolanchai.github.io/Commit-Challenge-2024/">2024</a>
+        <a class="link" href="https://github.com/Subset-UCSD/Commit-Challenge-2026"
           >GitHub</a
         >
       </nav>
@@ -65,7 +57,7 @@
     </main>
     <footer>
       <nav>
-        <a href="./privacy-policy/">Piracy</a>
+        <a class="link" href="./privacy-policy/">Piracy</a>
       </nav>
     </footer>
   </body>

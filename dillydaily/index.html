@@ -43,6 +43,10 @@
     </header>
     <main>
         <img src="../png/sheep.png" width="200" id="sheep" />
+      <script type="module">
+        const status = await fetch('./status.json').then(r => r.json())
+        console.log(status.status)
+      </script>
     </main>
   </body>
 </html>

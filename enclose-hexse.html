@@ -62,10 +62,10 @@ const thing = HEX_RADIUS /Math.sqrt(3)
 // radius is 1
 // so the half height is 0.5 sqrt 3
 //
-const offsetY = HEX_RADIUS * Math.sqrt(3)/2
+const offsetY = HEX_RADIUS * Math.sqrt(3)
 // and here we need the side length which is the shorter side times two , which is just 1 ?
-const offsetX = HEX_RADIUS*3
-const getWhereHexagonIs = ({x,y}) => ({x:(x+(y/2) )*offsetX,y:y*offsetY})
+const offsetX = HEX_RADIUS*1.5
+const getWhereHexagonIs = ({x,y}) => ({x:(x )*offsetX,y:(y+(x%2?0.5:0))*offsetY})
 function createHexagon ({x, y}) {
 
   let s = ''
@@ -79,8 +79,8 @@ function createHexagon ({x, y}) {
 return ``
 }
 let S = ''
-for (let x = 0; x < 10; x++) {
-  for (let y = 0; y < 10; y++){
+for (let x = 0; x < 20; x++) {
+  for (let y = 0; y < 20; y++){
     S += createHexagon({x,y})
   }
 }
@@ -92,10 +92,19 @@ function App () {
     h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5-1))}),
     h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5+1))}),
     h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5+1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5-1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5+2))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5-2))}), // holy hel
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5))}), // holy hel
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5+1))}),
     h('path', {className:'fill', d: createHexagon(v(5,5))}),
+
+
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8,8-1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8,8+1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8-1,8+1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8-1,8))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8+1,8))}), // holy hel
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8+1,8+1))}),
+    h('path', {className:'fill', d: createHexagon(v(8,8))}),
     h('path', {className:'hexagons', d: S}),
     h('text',{...getWhereHexagonIs(v(5,5))},'horse'),
   )

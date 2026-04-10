@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>what if enclose.horse .. but h</title>exagon?
-    <meta name="description" content="No description yet." />
+    <meta name="description" content="horsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorsehorse" />
 
-    <link rel="stylesheet" type="text/css" href="/sheep3.css" />
-    <script src="/sheep3.js" charset="utf-8"></script>
 
     <style>
       :root {
@@ -16,14 +14,18 @@
       }
       svg {
         position: absolute;
-        left:0;right:0;
+        bottom:0;right:0;
+        width:100%;
+        height:100%;
         over
         ;;;
-        overflow:visible
+        /* overflow:visible */
         ;;fill:none;
         /* alignment-baseline: central; */
         dominant-baseline: central;
         text-anchor: middle;
+        user-select: none;
+        touch-action: none;
       }
       .fill {
         fill: #0ff3;
@@ -31,7 +33,12 @@
       #daddy,.hexagons {
         stroke: currentColor;
       }
-      text {fill:currentColor}
+      text {fill:currentColor;
+      pointer-events: none;}
+      body {
+        font-family: 'comic sans ms';
+        font-size: 12px;
+      }
     </style>
   </head>
   <body>
@@ -47,7 +54,9 @@
   }
 }
 </script>
-    <script type="module"> import React, { useState, createElement as h,StrictMode } from 'react';
+    <script type="module"> import React, { useState, createElement as h,StrictMode
+      ,useRef,useEffect,useContext,Fragment
+    } from 'react';
   import { createRoot } from 'react-dom/client';
 const HEX_RADIUS = 30
 const v = (x,y)=>({x,y})
@@ -65,7 +74,12 @@ const thing = HEX_RADIUS /Math.sqrt(3)
 const offsetY = HEX_RADIUS * Math.sqrt(3)
 // and here we need the side length which is the shorter side times two , which is just 1 ?
 const offsetX = HEX_RADIUS*1.5
-const getWhereHexagonIs = ({x,y}) => ({x:(x )*offsetX,y:(y+(x%2?0.5:0))*offsetY})
+const getWhereHexagonIs = ({x,y}) => ({x:(x )*offsetX,y:(y-(x/2))*offsetY})
+const undo_getWhereHexagonIs = ({x,y}) => {
+  let x2 = x/offsetX
+  const y2 = y/offsetY + x2/2
+  return {x:x2,y:y2}
+}
 function createHexagon ({x, y}) {
 
   let s = ''
@@ -86,27 +100,168 @@ for (let x = 0; x < 20; x++) {
 }
 // daddy.setAttributeNS(null,'d',S)
 
-
+const zv={x:0,y:0}
+const add = (a,b)=>v(a.x+b.x,a.y+b.y)
+const sub = (a,b)=>v(a.x-b.x,a.y-b.y)
+const scale = ({x,y},s) => v(x*s,y*s)
+const inv = v => scale(v,-1)
+const lenSq=({x,y})=>x*x+y*y
 function App () {
-  return h('svg', null,
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5-1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5+1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5+1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5))}), // holy hel
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5+1))}),
-    h('path', {className:'fill', d: createHexagon(v(5,5))}),
+
+const ref = useRef()
+const [size,setSize]=useState(zv)
+const [view, setView] = useState({translate:zv,scale:2})
+const viewRef = useRef(view)
+
+const [board,setBoard] = useState(()=>new Map)
+
+useEffect(() => {
+// const observer = new ResizeObserver(([entry])=>{
+// setSize({x:entry.borderBoxSize[0].inlineSize,y:entry.borderBoxSize[0].blockSize})
+// })
+// observer.observe(ref.current)
+// return ()=>observer.disconnect()
+const measureSize = () => setSize({x:innerWidth,y:innerHeight})
+addEventListener('resize',measureSize)
+measureSize()
+return ()=>removeEventListener('resize',measureSize)
+},[])
+
+const visibleHexes = []
+const min = undo_getWhereHexagonIs(inv(scale(view.translate,1/view.scale)))
+const max = undo_getWhereHexagonIs(add(inv(scale(view.translate,1/view.scale)),scale(size,1/view.scale)))
 
 
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8,8-1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8,8+1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8-1,8+1))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8-1,8))}),
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8+1,8))}), // holy hel
-    h('path', {style:{fill:'#f003'}, d: createHexagon(v(8+1,8+1))}),
-    h('path', {className:'fill', d: createHexagon(v(8,8))}),
-    h('path', {className:'hexagons', d: S}),
-    h('text',{...getWhereHexagonIs(v(5,5))},'horse'),
+for (let x = Math.floor(min.x); x <= Math.ceil(max.x); x++) {
+  for (let y = Math.floor(min.y); y <= Math.ceil(max.y); y++) {
+    // // this isn ot very smart
+    const willBe = getWhereHexagonIs({x,y})
+const transform = add(scale(willBe, view.scale), view.translate)
+    if (transform.x >= -HEX_RADIUS*view.scale && transform.y >= -HEX_RADIUS*view.scale && transform.x <= size.x + HEX_RADIUS*view.scale&&transform.y <= size.y + HEX_RADIUS*view.scale)
+  visibleHexes.push({x,y})
+}
+}
+
+const [panning,setPanning]=useState(true)
+const dragState=useRef()
+const handlePointerDown = (e,data) => {
+if (!dragState.current) {
+  const ptr=v(e.clientX,e.clientY)
+  dragState.current={
+    pointerId:e.pointerId,
+    init: ptr,
+    initTrans : viewRef.current.translate,
+    dragging:false,data
+  }
+
+  e.currentTarget.setPointerCapture(e.pointerId)
+}
+}
+const handlePointerMove = e => {
+
+  if (e.pointerId === dragState.current?.pointerId) {
+    const ptr=v(e.clientX,e.clientY)
+    if (!dragState.current.dragging) {
+      if (lenSq(sub(ptr,dragState.current.init))>5){
+         setPanning(true)
+         dragState.current.dragging=true
+      }
+    }
+
+    if (dragState.current.dragging){
+
+
+const newView = {...viewRef.current,translate:add(dragState.current.initTrans, sub(ptr, dragState.current.init))}
+setView(viewRef.current=newView)
+}
+  }
+}
+const handlePointerEnd = e => {
+if (e.pointerId === dragState.current?.pointerId) {
+  if (!dragState.current.dragging&&dragState.current.data){
+//Click
+// console.log('click',dragState.current.data)
+const hex=dragState.current.data
+setBoard(board => {
+  const clone = new Map(board)
+  const clone2 = new Map(clone.get(hex.x,))
+  clone2.set(hex.y, '#0ff8')
+  clone.set(hex.x,clone2)
+  return clone
+})
+  }
+    dragState.current=null
+    setPanning(false)
+  }
+}
+
+const handleWheel = e => {
+  if (!e.shiftKey &&!e.ctrlKey&&!e.altKey&&!e.metaKey){
+    const ptr=v(e.clientX,e.clientY)
+    // let's think about it in 2d
+    // one 1d
+    // suppose we have mx = px * s + tx
+    // we want to find s' and tx' where px * s' + tx' = mx
+    // px * s + tx = px * s' + tx'
+    // idk
+    // oh nvm we have s'
+    // tx' = tx + px * (s - s')
+    //     = tx + (mx - tx) / s * (s - s')
+    const newscale = viewRef.current.scale * Math.exp(Math.min(Math.max(-2, -e.deltaY / 600), 2))
+    const newView = {
+      scale:newscale,
+      translate: add(viewRef.current.translate, scale(sub(viewRef.current.translate,ptr,), (newscale-viewRef.current.scale)/viewRef.current.scale))
+    }
+    setView(viewRef.current=newView)
+  }
+}
+
+useEffect(() => {
+  const block = e =>e.preventDefault()
+  ref.current?.addEventListener('wheel',block,{passive:false})
+  return ()=>ref.current?.removeEventListener('wheel',block,{passive:false})
+},[])
+
+  return h('svg', {ref,
+    onPointerDown:handlePointerDown,
+    onPointerMove:handlePointerMove,
+    onPointerUp:handlePointerEnd,
+    onPointerCancel:handlePointerEnd,
+    onWheel:handleWheel
+  },
+  h('g', {
+style:{transform:panning?`translate3d(${view.translate.x}px,${view.translate.y}px,0) scale(${view.scale})`:`translate(${view.translate.x}px,${view.translate.y}px) scale(${view.scale})`},
+  },
+  visibleHexes.map((hex) => h(Fragment, {key:`${hex.x} ${hex.y}`},
+    h('path', {
+    style:{fill:board.get(hex.x)?.get(hex.y)?? `hsl(${hex.x *93+ hex.y * 83}, 100%,50%,0.1)`,stroke:'yellow',},
+    onPointerDown: e=>handlePointerDown(e,hex),
+    d: createHexagon(hex)
+  }),
+  h('text', {
+    ...getWhereHexagonIs(hex),
+  },`${hex.x}, ${hex.y}`)
+  )
+  )
+),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5-1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5+1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5-1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5))}), // holy hel
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5+1))}),
+    // h('path', {className:'fill', d: createHexagon(v(5,5))}),
+
+
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10,10-1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10,10+1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10-1,10-1))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10-1,10))}),
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10+1,10))}), // holy hel
+    // h('path', {style:{fill:'#f003'}, d: createHexagon(v(10+1,10+1))}),
+    // h('path', {className:'fill', d: createHexagon(v(10,10))}),
+    // h('path', {className:'hexagons', d: S}),
+    // h('text',{...getWhereHexagonIs(v(5,5))},'horse'),
   )
 }
 

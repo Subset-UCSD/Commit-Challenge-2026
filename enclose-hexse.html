@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>what if enclose.horse .. but h</title>exagon?
+    <meta name="description" content="No description yet." />
+
+    <link rel="stylesheet" type="text/css" href="/sheep3.css" />
+    <script src="/sheep3.js" charset="utf-8"></script>
+
+    <style>
+      :root {
+        color-scheme: dark
+      }
+      svg {
+        position: absolute;
+        left:0;right:0;
+        over
+        ;;;
+        overflow:visible
+        ;;fill:none;
+        /* alignment-baseline: central; */
+        dominant-baseline: central;
+        text-anchor: middle;
+      }
+      .fill {
+        fill: #0ff3;
+      }
+      #daddy,.hexagons {
+        stroke: currentColor;
+      }
+      text {fill:currentColor}
+    </style>
+  </head>
+  <body>
+    <!-- <svg>
+<path d="" id="daddy"/>
+    </svg> -->
+    <div id="root"></div>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.2.5",
+    "react-dom/": "https://esm.sh/react-dom@19.2.5/"
+  }
+}
+</script>
+    <script type="module"> import React, { useState, createElement as h,StrictMode } from 'react';
+  import { createRoot } from 'react-dom/client';
+const HEX_RADIUS = 30
+const v = (x,y)=>({x,y})
+// equilateral triang
+// height 1
+// so the shroter side is
+// it's a 30 60 90 triangle
+// so x : 1 : 2x
+// so 1 : sqrt(3)/x :  what??
+const thing = HEX_RADIUS /Math.sqrt(3)
+// i got this all wrong
+// radius is 1
+// so the half height is 0.5 sqrt 3
+//
+const offsetY = HEX_RADIUS * Math.sqrt(3)/2
+// and here we need the side length which is the shorter side times two , which is just 1 ?
+const offsetX = HEX_RADIUS*3
+const getWhereHexagonIs = ({x,y}) => ({x:(x+(y/2) )*offsetX,y:y*offsetY})
+function createHexagon ({x, y}) {
+
+  let s = ''
+  const h=getWhereHexagonIs({x,y})
+  for (let  i = 0;i < 6; i++) {
+    s += (i > 0 ?'L':'M')+`${h.x+HEX_RADIUS*Math.cos(i*Math.PI/3)} ${h.y+HEX_RADIUS*Math.sin(i*Math.PI/3)}`
+  }
+  s+='z'
+
+  return s
+return ``
+}
+let S = ''
+for (let x = 0; x < 10; x++) {
+  for (let y = 0; y < 10; y++){
+    S += createHexagon({x,y})
+  }
+}
+// daddy.setAttributeNS(null,'d',S)
+
+
+function App () {
+  return h('svg', null,
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5-1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5+1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5+1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5-1))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5-1,5+2))}),
+    h('path', {style:{fill:'#f003'}, d: createHexagon(v(5+1,5-2))}), // holy hel
+    h('path', {className:'fill', d: createHexagon(v(5,5))}),
+    h('path', {className:'hexagons', d: S}),
+    h('text',{...getWhereHexagonIs(v(5,5))},'horse'),
+  )
+}
+
+createRoot(root).render(h(StrictMode, null, h(App)))
+
+
+// TEMP
+    </script>
+  </body>
+</html>

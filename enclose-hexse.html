@@ -26,6 +26,8 @@
         text-anchor: middle;
         user-select: none;
         touch-action: none;
+        /* stroke-linejoin: round; */
+        color: rgba(255,255,255,0.3);
       }
       .fill {
         fill: #0ff3;
@@ -55,6 +57,7 @@
 }
 </script>
     <script type="module"> import React, { useState, createElement as h,StrictMode
+    ,useMemo
       ,useRef,useEffect,useContext,Fragment
     } from 'react';
   import { createRoot } from 'react-dom/client';
@@ -106,14 +109,105 @@ const sub = (a,b)=>v(a.x-b.x,a.y-b.y)
 const scale = ({x,y},s) => v(x*s,y*s)
 const inv = v => scale(v,-1)
 const lenSq=({x,y})=>x*x+y*y
+const eq = (a,b)=>a.x===b.x&&a.y===b.y
+
+const neighhhbors = [
+  v(-1,-1),
+  v(-1,0),
+  v(0,-1),
+  v(0,1),
+  v(1,0),
+  v(1,1),
+]
+
+const boundsRadius = 6
+const isGoal=(hex)=>Math.abs(hex.x )=== boundsRadius || Math.abs(hex.y )=== boundsRadius || Math.abs(hex.y-hex.x)===boundsRadius
+const heursitic = vec => {
+  // TODO: how close are we to the edge
+  // this sounds hard
+  return Math.min(
+    Math.abs(vec.x-boundsRadius),
+    Math.abs(vec.x+boundsRadius),
+    Math.abs(vec.y-boundsRadius),
+    Math.abs(vec.y+boundsRadius),
+    Math.abs((vec.y-vec.x)-boundsRadius),
+    Math.abs((vec.y-vec.x)+boundsRadius),
+  )
+  return 1// idk
+}
+// unbelieveabily inefficient
+function aStar (board, start) {
+  const queue = new Map([[start.x, new Set([start.y])]])
+  const nodeData = new Map([[start.x, new Map([[start.y, {
+    node:start,
+    prev:null,
+    g:0,
+    h: heursitic(start),
+    f: heursitic(start)
+  }]])]])
+  while (true) {
+    const next = queue.entries()
+    .flatMap(([x, ys]) => ys.values().map(y => ({x,y})))
+    .reduce((cum, curr,i) => {
+      const entry = nodeData.get(curr.x)?.get(curr.y)
+      const f = entry?.f ?? Infinity
+      return f > cum.f ? cum : {f,pos:curr,entry,i}
+    }, {f:Infinity})
+    if (!next.pos)break
+    if (isGoal(next.pos)) {
+      // yipe
+      const path = [next.pos]
+      while (true) {
+        const prev = nodeData.get(path[0].x)?.get(path[0].y)?.prev
+        if (!prev){return {succ:'yes',path}}
+
+        path.unshift(prev)
+      }
+    }
+    queue.get(next.entry.node.x)?.delete(next.entry.node.y)
+
+    for (const n of neighhhbors) {
+      const g = next.entry.g + 1
+      const neigh = add(n,next.entry.node)
+    if (!board.get(neigh.x)?.get(neigh.y))continue
+      const neighDatum = nodeData.get(neigh.x)?.get(neigh.y) ?? {g:Infinity}
+      if (g < neighDatum.g) {
+        const h = heursitic(neigh)
+        nodeData.getOrInsert(neigh.x, new Map).set(neigh.y, {
+          node: neigh,
+          prev:next.entry.node,
+          g,
+          h,f: g+h
+        })
+        queue.getOrInsert(neigh.x, new Set).add(neigh.y)
+        // if (!queue.find(v => eq(v, neigh))){
+        //   queue.push(neigh)
+        // }
+      }
+    }
+  }
+  const best = nodeData.values().flatMap(map => map.values())
+  // use heuristic to find closest node
+  .reduce((cum, curr) => curr.h < cum.h ? curr:cum, {h:Infinity})
+  // console.log(nodeData,best)
+  const path = [best.node]
+  while (true) {
+    const prev = nodeData.get(path[0].x)?.get(path[0].y)?.prev
+        if (!prev)
+  return {suc:'no',path}
+
+        path.unshift(prev)
+  }
+}
+
 function App () {
 
 const ref = useRef()
 const [size,setSize]=useState(zv)
-const [view, setView] = useState({translate:zv,scale:2})
+const [view, setView] = useState(()=>({translate:v(500,500),scale:2}))
 const viewRef = useRef(view)
 
-const [board,setBoard] = useState(()=>new Map)
+const [board,setBoard] = useState(()=>new Map([[0,new Map([[0,'magenta']])]]))
 
 useEffect(() => {
 // const observer = new ResizeObserver(([entry])=>{
@@ -185,7 +279,7 @@ const hex=dragState.current.data
 setBoard(board => {
   const clone = new Map(board)
   const clone2 = new Map(clone.get(hex.x,))
-  clone2.set(hex.y, '#0ff8')
+  clone2.set(hex.y,clone2.get(hex.y)?null: '#0ff8')
   clone.set(hex.x,clone2)
   return clone
 })
@@ -222,6 +316,10 @@ useEffect(() => {
   return ()=>ref.current?.removeEventListener('wheel',block,{passive:false})
 },[])
 
+const getBoard = ({x,y})=>board.get(x)?.get(y)
+
+const path = useMemo(() => aStar(board, zv),[board])
+
   return h('svg', {ref,
     onPointerDown:handlePointerDown,
     onPointerMove:handlePointerMove,
@@ -232,17 +330,33 @@ useEffect(() => {
   h('g', {
 style:{transform:panning?`translate3d(${view.translate.x}px,${view.translate.y}px,0) scale(${view.scale})`:`translate(${view.translate.x}px,${view.translate.y}px) scale(${view.scale})`},
   },
-  visibleHexes.map((hex) => h(Fragment, {key:`${hex.x} ${hex.y}`},
+  visibleHexes.map((hex) => {
+    const cell = getBoard(hex)
+    const isNeighbor = !cell&&neighhhbors.some(n => getBoard(add(hex,n)))
+    return h(Fragment, {key:`${hex.x} ${hex.y}`},
     h('path', {
-    style:{fill:board.get(hex.x)?.get(hex.y)?? `hsl(${hex.x *93+ hex.y * 83}, 100%,50%,0.1)`,stroke:'yellow',},
+    style:{fill:
+      cell?cell:
+      // israel flag
+      (isGoal(hex) )? '#ff03':
+     isNeighbor?'#f003':
+     `hsl(${hex.x *93+ hex.y * 83}, 100%,50%,0.1)`,stroke:'black',},
     onPointerDown: e=>handlePointerDown(e,hex),
     d: createHexagon(hex)
   }),
   h('text', {
     ...getWhereHexagonIs(hex),
   },`${hex.x}, ${hex.y}`)
-  )
-  )
+  )}
+  ),
+
+  h('path', {
+    stroke: path.succ ? 'lime':'red',
+    style:{pointerEvents:'none'},
+    d: path.path.map((v,i)=>{
+      const {x,y}=getWhereHexagonIs(v)
+      return(i?'L':'M')+`${x} ${y}`}).join('')
+  }),
 ),
     // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5-1))}),
     // h('path', {style:{fill:'#f003'}, d: createHexagon(v(5,5+1))}),
